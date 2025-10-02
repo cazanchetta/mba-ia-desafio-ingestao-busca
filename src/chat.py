@@ -2,29 +2,43 @@ import sys
 import argparse
 from search import search_prompt
 
-BANNER = "Faça sua pergunta:\n"
+BANNER = "Faça sua pergunta (ou digite 'sair' para encerrar):"
+EXIT_COMMANDS = {"sair", "exit", "quit", "q"}
+
+def responder(pergunta: str):
+    resposta = (search_prompt(pergunta) or "").strip()
+    
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Pergunte via CLI e receba a resposta."
+        description="Pergunte via CLI e receba a resposta (modo interativo)."
     )
-    parser.add_argument("pergunta", nargs="*", help="Texto da pergunta.")
+    parser.add_argument("pergunta", nargs="*", help="Texto da pergunta (opcional).")
     args = parser.parse_args()
 
     if args.pergunta:
-        question = " ".join(args.pergunta).strip()
-    else:
-        if not sys.stdin.isatty():
-            question = sys.stdin.read().strip()
-        else:
-            question = input(BANNER).strip()
+        pergunta_inicial = " ".join(args.pergunta).strip()
+        if pergunta_inicial:
+            responder(pergunta_inicial)
 
-    if not question:
-        print("Pergunta vazia.")
-        sys.exit(1)
+    # Entra no modo interativo
+    print(BANNER)
+    while True:
+        try:
+            pergunta = input("> ").strip()
+        except EOFError:
+            print()  # encerra graciosamente
+            break
+        except KeyboardInterrupt:
+            print("\n(Use 'sair' para encerrar.)")
+            continue
 
-    search_prompt(question)
+        if not pergunta:
+            continue
+        if pergunta.lower() in EXIT_COMMANDS:
+            break
 
+        responder(pergunta)
 
 if __name__ == "__main__":
     main()

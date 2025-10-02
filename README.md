@@ -52,6 +52,9 @@ python ingest.py
 python chat.py
 ```
 
+### 3. Encerrar
+Para sair do modo interativo do sistema basta digitar 'sair' e o sistema se encerrará.
+
 ---
 
 ## 📋 Exemplos
